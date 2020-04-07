@@ -1,26 +1,74 @@
 @startuml
+skinparam classAttributeIconSize 0
 
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+class Clinic {
+- doctors: List<Doctor>
+- registry: Registry
+- administrator: Administrator
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+class Doctor {
+- name: String
+- speciality: EnumSet<Speciality>
+
+askHistory(Patient patient): MedicalHistory
+updateHistory(Patient patient, MedicalCase case)
 }
+
+class Patient {
+- name: String
+- medicalHistory: MedicalHistory
+
+shareHistory()
+updateHistory(MedicalCase case)
+}
+
+class Registry {
+- patients: List<Patient>
+
+addPatient(Patient patient)
+withdraw(Patient patient)
+}
+
+class Timetable {
+}
+
+class Administrator {
+
+bookVisit(Doctor doctor, Patient patient)
+}
+
+class MedicalCase {
+- date: LocalDate
+- description: String
+}
+
+class MedicalHistory {
+- history: List<MedicalCase>
+
+- update(MedicalCase case)
+}
+
+enum Speciality {
+INTERNAL_MEDICINE
+PEDIATRICS
+CARDIOLOGY
+OBGYN
+}
+
+Doctor o-- "1...*" Speciality
+Patient o-- "1" MedicalHistory
+MedicalHistory o-- "0..*" MedicalCase
+Registry o-- "0...*" Patient
+Clinic o-- "1...*" Doctor
+Clinic o-- "1" Registry
+Clinic o-- "1" Administrator
+
+Patient <.. Doctor: uses
+MedicalCase <.. Doctor: uses
+MedicalHistory <.. Doctor: uses
+
+Doctor <.. Administrator: uses
+Patient <.. Administrator: uses
 
 @enduml
