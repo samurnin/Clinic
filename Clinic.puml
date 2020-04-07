@@ -5,37 +5,41 @@ class Clinic {
 - doctors: List<Doctor>
 - registry: Registry
 - administrator: Administrator
+
+showFreeSlots()
+getAdministrator()
 }
 
 class Doctor {
 - name: String
 - speciality: EnumSet<Speciality>
-
-askHistory(Patient patient): MedicalHistory
-updateHistory(Patient patient, MedicalCase case)
+- visits: List<Visit>
+askHistory(Patient): MedicalHistory
+updateHistory(Patient, MedicalCase)
 }
 
 class Patient {
 - name: String
 - medicalHistory: MedicalHistory
-
-shareHistory()
-updateHistory(MedicalCase case)
+shareHistory(): MedicalHistory
+updateHistory(MedicalCase)
 }
 
 class Registry {
 - patients: List<Patient>
-
-addPatient(Patient patient)
-withdraw(Patient patient)
+add(Patient)
+withdraw(Patient)
 }
 
-class Timetable {
+class Visit {
+- from: LocalDateTime
+- to: LocalDateTime
+- isBooked: Boolean
+- patient: Patient
 }
 
 class Administrator {
-
-bookVisit(Doctor doctor, Patient patient)
+bookVisit(Doctor, Patient)
 }
 
 class MedicalCase {
@@ -45,8 +49,7 @@ class MedicalCase {
 
 class MedicalHistory {
 - history: List<MedicalCase>
-
-- update(MedicalCase case)
+- update(MedicalCase)
 }
 
 enum Speciality {
@@ -57,6 +60,7 @@ OBGYN
 }
 
 Doctor o-- "1...*" Speciality
+Doctor o-- "1...*" Visit
 Patient o-- "1" MedicalHistory
 MedicalHistory o-- "0..*" MedicalCase
 Registry o-- "0...*" Patient
@@ -65,9 +69,9 @@ Clinic o-- "1" Registry
 Clinic o-- "1" Administrator
 
 Patient <.. Doctor: uses
+Patient <.. Visit: uses
 MedicalCase <.. Doctor: uses
 MedicalHistory <.. Doctor: uses
-
 Doctor <.. Administrator: uses
 Patient <.. Administrator: uses
 
