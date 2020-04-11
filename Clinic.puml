@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Clinic {
+- doctors: List<Doctor>
+- registry: Registry
+- administrator: Administrator
+
+showFreeSlots()
+getAdministrator()
+}
+
+class Doctor {
+- name: String
+- speciality: EnumSet<Speciality>
+- visits: List<Visit>
+askHistory(Patient): MedicalHistory
+updateHistory(Patient, MedicalCase)
+}
+
+class Patient {
+- name: String
+- medicalHistory: MedicalHistory
+shareHistory(): MedicalHistory
+updateHistory(MedicalCase)
+}
+
+class Registry {
+- patients: List<Patient>
+add(Patient)
+withdraw(Patient)
+}
+
+class Visit {
+- from: LocalDateTime
+- to: LocalDateTime
+- isBooked: Boolean
+- patient: Patient
+}
+
+class Administrator {
+bookVisit(Doctor, Patient)
+}
+
+class MedicalCase {
+- date: LocalDate
+- description: String
+}
+
+class MedicalHistory {
+- history: List<MedicalCase>
+- update(MedicalCase)
+}
+
+enum Speciality {
+INTERNAL_MEDICINE
+PEDIATRICS
+CARDIOLOGY
+OBGYN
+}
+
+Doctor o-- "1...*" Speciality
+Doctor o-- "1...*" Visit
+Patient o-- "1" MedicalHistory
+MedicalHistory o-- "0..*" MedicalCase
+Registry o-- "0...*" Patient
+Clinic o-- "1...*" Doctor
+Clinic o-- "1" Registry
+Clinic o-- "1" Administrator
+
+Patient <.. Doctor: uses
+Patient <.. Visit: uses
+MedicalCase <.. Doctor: uses
+MedicalHistory <.. Doctor: uses
+Doctor <.. Administrator: uses
+Patient <.. Administrator: uses
+
+@enduml
